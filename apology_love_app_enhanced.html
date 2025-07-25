@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I'm Sorry Babe</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(to bottom right, #ffb6c1, #ffc0cb, #ff7f7f);
+      transition: opacity 0.8s ease-in-out;
+      opacity: 0;
+      z-index: 0;
+      text-align: center;
+    }
+    .active {
+      opacity: 1;
+      z-index: 1;
+    }
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      clip-path: polygon(50% 0%, 100% 35%, 75% 100%, 50% 75%, 25% 100%, 0% 35%);
+      opacity: 0.6;
+      animation: float 6s infinite ease-in;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(1); }
+      100% { transform: translateY(-10vh) scale(1.2); }
+    }
+    .btn {
+      padding: 12px 24px;
+      margin: 12px;
+      background: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #ffe6e6;
+    }
+    h1, h2, p {
+      padding: 0 16px;
+    }
+    .emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    #thankyou-extra {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #fff;
+      background: rgba(0,0,0,0.3);
+      padding: 10px;
+      border-radius: 12px;
+    }
+    .shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    .typing-text::after {
+      content: '|';
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <audio id="bg-music" loop autoplay>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2e297c0df5.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="screen active" id="screen1">
+    <div class="emoji">😔💔</div>
+    <h1><span class="typing-text" id="mainMessage">I'm sorry babe</span></h1>
+    <div class="hearts"></div>
+    <button class="btn" onclick="forgiveMe()">Forgive me plssss</button>
+    <button class="btn" onclick="notYet(this)">Not yet</button>
+  </div>
+
+  <div class="screen" id="screen2">
+    <div class="emoji">🙏😢💘</div>
+    <h2>Give me another chance</h2>
+    <p id="countdownTimer">Redirecting in 3...</p>
+  </div>
+
+  <div class="screen" id="screen3">
+    <div class="emoji">🌸🐻💖</div>
+    <h2>Thank you for forgiving me</h2>
+    <p>I shouldn't have said such stuff, I lovee youuu 💕</p>
+    <div id="thankyou-extra">
+      You're the most special person in my life. I promise to be better, love harder, and care deeper. 💘
+    </div>
+  </div>
+
+  <script>
+    function forgiveMe() {
+      navigator.vibrate?.(100);
+      switchScreen('screen1', 'screen3');
+      document.getElementById('thankyou-extra').style.display = 'block';
+      confetti();
+    }
+
+    function notYet(btn) {
+      navigator.vibrate?.(50);
+      btn.classList.add('shake');
+      setTimeout(() => btn.classList.remove('shake'), 500);
+      switchScreen('screen1', 'screen2');
+      let seconds = 3;
+      const countdown = setInterval(() => {
+        seconds--;
+        document.getElementById('countdownTimer').textContent = `Redirecting in ${seconds}...`;
+        if (seconds === 0) {
+          clearInterval(countdown);
+          switchScreen('screen2', 'screen1');
+        }
+      }, 1000);
+    }
+
+    function switchScreen(fromId, toId) {
+      document.getElementById(fromId).classList.remove('active');
+      document.getElementById(toId).classList.add('active');
+    }
+
+    const heartContainer = document.querySelectorAll('.hearts');
+    for (let i = 0; i < 30; i++) {
+      let heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+      heart.style.opacity = Math.random();
+      heart.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 75%)`;
+      heartContainer.forEach(c => c.appendChild(heart.cloneNode(true)));
+    }
+
+    function confetti() {
+      for (let i = 0; i < 100; i++) {
+        const confetto = document.createElement('div');
+        confetto.classList.add('heart');
+        confetto.style.left = Math.random() * 100 + '%';
+        confetto.style.top = Math.random() * 100 + '%';
+        confetto.style.animationDuration = (2 + Math.random() * 2) + 's';
+        confetto.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 75%)`;
+        document.body.appendChild(confetto);
+        setTimeout(() => confetto.remove(), 3000);
+      }
+    }
+  </script>
+</body>
+</html>
